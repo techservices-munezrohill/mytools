@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "MyTools"
+  },
+  "home": {
+    "tagline": "A neutral tools app that helps you find nearby services and information.",
+    "categoriesHeading": "Browse by category",
+    "hub": "Info Hub",
+    "bookmarks": "Saved Items",
+    "emergency": "Emergency Card",
+    "privacyFooter": "This app does not track you. Tap Quick Exit any time to leave instantly."
+  },
+  "categories": {
+    "health": "Health",
+    "legal": "Legal",
+    "organizations": "Organizations",
+    "safeSpaces": "Safe Spaces",
+    "housing": "Housing",
+    "emergency": "Emergency"
+  },
+  "install": {
+    "title": "Install MyTools",
+    "body": "Add MyTools to your home screen for faster, offline-friendly access.",
+    "cta": "Install",
+    "dismiss": "Not now"
+  },
+  "directory": {
+    "title": "Service Directory",
+    "placeholder": "Browse vetted services. You can filter by category.",
+    "filter": "Filtering by category: {category}",
+    "listHeading": "Nearby and relevant services",
+    "emptyState": "We could not find any services yet. MRI will add vetted places here soon.",
+    "locationNotice": "If you allowed location, we only use an approximate position in your browser to sort results. Your exact location is not sent to our server.",
+    "distance": "About {km} km away"
+  },
+  "hub": {
+    "title": "Information Hub",
+    "placeholder": "Curated articles on legal updates, health, and community resources."
+  },
+  "emergency": {
+    "title": "Emergency Card",
+    "subtitle": "Always available. Works offline. Tap a number to call.",
+    "contactsHeading": "Call for help",
+    "contacts": {
+      "police": "Police emergency",
+      "medical": "Medical emergency",
+      "legalAid": "Legal aid hotline"
+    },
+    "nearestCenterHeading": "Nearest safe health center",
+    "defaultCenter": {
+      "name": "Kigali friendly health center",
+      "city": "Kigali, Rwanda",
+      "note": "MRI will update this with your nearest center as the directory grows."
+    },
+    "tipsHeading": "Safety tips",
+    "tips": {
+      "1": "If you feel watched, tap Quick Exit immediately.",
+      "2": "Avoid discussing sensitive topics on shared devices.",
+      "3": "Share this app only with people you trust.",
+      "4": "Use a screen lock or biometrics on your phone.",
+      "5": "If you are in immediate danger, call the police number above.",
+      "6": "Clear your browser history after use if you share a device."
+    },
+    "quickExitReminder": "Quick Exit is always in the bottom-right corner."
+  },
+  "quickExit": "Quick Exit",
+  "onboarding": {
+    "eyebrow": "First visit",
+    "title": "Welcome to MyTools",
+    "body": "A neutral app to find trusted services and information. You can use it without an account.",
+    "tipBrowse": "Browse the directory and Information Hub for vetted services and updates.",
+    "tipInstall": "When your browser offers it, add MyTools to your home screen for quicker access.",
+    "tipQuickExit": "Tap Quick Exit (bottom-right) any time to leave instantly and open a normal website.",
+    "continue": "Continue",
+    "skip": "Skip"
+  }
+}

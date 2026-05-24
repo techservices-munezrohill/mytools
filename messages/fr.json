@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "MyTools"
+  },
+  "home": {
+    "tagline": "",
+    "categoriesHeading": "",
+    "hub": "",
+    "emergency": "",
+    "privacyFooter": ""
+  },
+  "categories": {
+    "health": "",
+    "legal": "",
+    "organizations": "",
+    "safeSpaces": "",
+    "housing": "",
+    "emergency": ""
+  },
+  "install": {
+    "title": "",
+    "body": "",
+    "cta": "",
+    "dismiss": ""
+  },
+  "directory": {
+    "title": "",
+    "placeholder": "",
+    "filter": "",
+    "comingSoon": ""
+  },
+  "hub": {
+    "title": "",
+    "placeholder": "",
+    "comingSoon": ""
+  },
+  "emergency": {
+    "title": "",
+    "subtitle": "",
+    "contactsHeading": "",
+    "contacts": {
+      "police": "",
+      "medical": "",
+      "legalAid": ""
+    },
+    "nearestCenterHeading": "",
+    "defaultCenter": {
+      "name": "",
+      "city": "",
+      "note": ""
+    },
+    "tipsHeading": "",
+    "tips": {
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "6": ""
+    },
+    "quickExitReminder": ""
+  },
+  "quickExit": ""
+}

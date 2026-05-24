@@ -1,30 +1,51 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
-import QuickExitButton from '@/components/QuickExitButton';
 import AutoBlurOverlay from '@/components/AutoBlurOverlay';
 import PwaInit from '@/components/PwaInit';
+import UmamiLoader from '@/components/UmamiLoader';
+import CaptureReferral from '@/components/CaptureReferral';
 
 export const metadata: Metadata = {
+
+
   title: 'MyTools',
-  description: 'Neutral tools app providing access to local services and information.',
+  description: 'A neutral tools app providing access to local services and information.',
   manifest: '/manifest.json',
-  themeColor: '#0f172a',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
-export default function RootLayout({
+export const viewport: Viewport = {
+  themeColor: '#0f172a',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-slate-50 text-slate-900">
-        <PwaInit />
-        <AutoBlurOverlay />
-        <div className="relative min-h-screen">
-          <QuickExitButton />
-          <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
-        </div>
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <PwaInit />
+          <AutoBlurOverlay />
+          <UmamiLoader />
+          <CaptureReferral />
+          {children}
+        </NextIntlClientProvider>
+
+
       </body>
     </html>
   );

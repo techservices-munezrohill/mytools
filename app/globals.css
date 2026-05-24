@@ -2,6 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-50 text-slate-900;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply min-h-screen bg-sand-50 bg-app-gradient text-slate-900 antialiased;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-sand-50;
+  }
+}
+
+@layer utilities {
+  /* Shimmer utility for skeleton loaders. */
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      rgba(15, 118, 110, 0.06) 0%,
+      rgba(15, 118, 110, 0.12) 50%,
+      rgba(15, 118, 110, 0.06) 100%
+    );
+    background-size: 800px 100%;
+    @apply animate-shimmer rounded;
+  }
+
+  /* Small helper so active-press feel is present even when other anims run. */
+  .press {
+    @apply transition-transform duration-150 active:scale-[0.97];
+  }
+}
+
+/* Low data mode: hide images to reduce bandwidth on slow connections. */
+.low-data img,
+.low-data picture,
+.low-data video,
+.low-data .leaflet-tile-pane {
+  display: none !important;
+}
+
+/* Respect users who prefer reduced motion. Auto Blur and Quick Exit
+   redirect stay instant; only decorative animations are disabled. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* FIXED: Complete sweep of all map layout layers to force them below your dropdown */
+.leaflet-container,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 0 !important;
 }

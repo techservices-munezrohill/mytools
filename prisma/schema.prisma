@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(EDITOR)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+model Listing {
+  id               String          @id @default(cuid())
+  name             String
+  category         ListingCategory
+  description      String
+  services         String[]        @default([])
+  address          String?
+  lat              Float?
+  lng              Float?
+  hours            String?
+  acceptsWalkIns   Boolean         @default(false) @map("accepts_walk_ins")
+  missionStatement String?         @map("mission_statement")
+  focusAreas       String[]        @default([]) @map("focus_areas")
+  lastVerifiedAt   DateTime?       @map("last_verified_at")
+  isHidden         Boolean         @default(false) @map("is_hidden")
+  ratingsLocked    Boolean         @default(false) @map("ratings_locked")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  email            String?
+  phone            String?
+  website          String?
+  flags            ListingFlag[]
+  trustRatings     TrustRating[]
+
+  @@index([category])
+  @@index([lastVerifiedAt])
+  @@map("listings")
+}
+
+model ListingFlag {
+  id        String   @id @default(cuid())
+  listingId String   @map("listing_id")
+  reason    String
+  freeText  String?  @map("free_text")
+  createdAt DateTime @default(now()) @map("created_at")
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@map("listing_flags")
+}
+
+model TrustRating {
+  id        String   @id @default(cuid())
+  listingId String   @map("listing_id")
+  score     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@map("trust_ratings")
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  bodyHtml    String    @map("body_html")
+  excerpt     String?
+  viewCount   Int       @default(0) @map("view_count")
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([publishedAt])
+  @@map("articles")
+}
+
+model ReferralCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  label     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("referral_codes")
+}
+
+model ServiceRequest {
+  id           String   @id @default(cuid())
+  searchTerm   String   @map("search_term")
+  freeText     String?  @map("free_text")
+  isLowCoverage Boolean @default(false) @map("is_low_coverage")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("service_requests")
+}
+
+enum ListingCategory {
+  HEALTH
+  LEGAL
+  ORGANIZATION
+  SAFE_SPACE
+  HOUSING
+  EMERGENCY
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 3 — User accounts (PRD §5.5)
+// ---------------------------------------------------------------------------
+
+model AppUser {
+  id              String     @id @default(cuid())
+  nickname        String
+  pinHash         String     @map("pin_hash")
+  encryptedEmail  String?    @map("encrypted_email")
+  encryptedPhone  String?    @map("encrypted_phone")
+  gender          Gender?
+  ageRange        AgeRange?  @map("age_range")
+  province        String?
+  referralSource  String?    @map("referral_source")
+  usageReasons    String[]   @default([]) @map("usage_reasons")
+  selfDescribeGender String? @map("self_describe_gender")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  bookmarks       UserBookmark[]
+
+  @@index([nickname])
+  @@map("app_users")
+}
+
+model UserBookmark {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // "article" | "listing"
+  itemId    String   @map("item_id")
+  title     String
+  meta      String   // slug for articles, category for listings
+  createdAt DateTime @default(now()) @map("created_at")
+  user      AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, itemId])
+  @@index([userId])
+  @@map("user_bookmarks")
+}
+
+enum Gender {
+  MAN
+  WOMAN
+  NON_BINARY
+  TRANSGENDER_MAN
+  TRANSGENDER_WOMAN
+  GENDERQUEER
+  SELF_DESCRIBE
+  PREFER_NOT_TO_SAY
+}
+
+enum AgeRange {
+  AGE_18_24
+  AGE_25_34
+  AGE_35_44
+  AGE_45_PLUS
+  PREFER_NOT_TO_SAY
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 3 — Tourism / Events Mode (PRD §5.6)
+// ---------------------------------------------------------------------------
+
+model Event {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  title             String
+  bodyHtml          String   @map("body_html")
+  emergencyContacts Json     @default("[]") @map("emergency_contacts")
+  safetyTips        String[] @default([]) @map("safety_tips")
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("events")
+}
+
+model ReferralVisit {
+  id        String   @id @default(cuid())
+  code      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([code])
+  @@map("referral_visit")
+}

@@ -1,79 +1,79 @@
-export default function AdminDirectoryPage() {
+import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
+
+const STALE_THRESHOLD_MS = 1000 * 60 * 60 * 24 * 180; // 6 months
+
+function formatDate(date: Date | null) {
+  if (!date) return '—';
+  return new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(date);
+}
+
+export default async function AdminDirectoryPage() {
+  const listings = await prisma.listing.findMany({
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  const now = Date.now();
+
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Directory Management</h1>
-      <p className="text-sm text-slate-600">
-        Add and update vetted services. This is a skeleton only; saving to the database
-        will be wired in a later sprint.
-      </p>
-
-      <form className="grid gap-4 rounded border border-slate-200 bg-white p-4 text-sm shadow-sm md:grid-cols-2">
-        <div className="space-y-1">
-          <label className="block text-slate-700">Name</label>
-          <input className="w-full rounded border border-slate-300 px-3 py-2" />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold">Directory</h1>
+          <p className="text-sm text-slate-600">
+            {listings.length} listing{listings.length === 1 ? '' : 's'}. Stale listings
+            are flagged in amber.
+          </p>
         </div>
-        <div className="space-y-1">
-          <label className="block text-slate-700">Category</label>
-          <select className="w-full rounded border border-slate-300 px-3 py-2">
-            <option>Health</option>
-            <option>Legal</option>
-            <option>Organization</option>
-            <option>Safe Social Space</option>
-            <option>Inclusive Housing</option>
-            <option>Emergency</option>
-          </select>
-        </div>
-        <div className="space-y-1 md:col-span-2">
-          <label className="block text-slate-700">Address / Location description</label>
-          <input className="w-full rounded border border-slate-300 px-3 py-2" />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-slate-700">Latitude</label>
-          <input className="w-full rounded border border-slate-300 px-3 py-2" />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-slate-700">Longitude</label>
-          <input className="w-full rounded border border-slate-300 px-3 py-2" />
-        </div>
-        <div className="space-y-1 md:col-span-2">
-          <label className="block text-slate-700">Services offered (comma-separated)</label>
-          <input className="w-full rounded border border-slate-300 px-3 py-2" />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-slate-700">Last verified date</label>
-          <input type="date" className="w-full rounded border border-slate-300 px-3 py-2" />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-slate-700">Accepts walk-ins?</label>
-          <select className="w-full rounded border border-slate-300 px-3 py-2">
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
-        <div className="md:col-span-2 flex justify-end gap-2 pt-2">
-          <button
-            type="button"
-            className="rounded border border-slate-300 px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
-          >
-            Clear
-          </button>
-          <button
-            type="button"
-            className="rounded bg-slate-800 px-3 py-2 text-xs font-medium text-white hover:bg-slate-900"
-          >
-            Save (disabled in Sprint 1)
-          </button>
-        </div>
-      </form>
-
-      <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-4 text-xs text-slate-500">
-        In later sprints this page will:
-        <ul className="mt-2 list-disc pl-4">
-          <li>List all existing directory entries with search and filters.</li>
-          <li>Highlight listings not verified in the last 6 months.</li>
-          <li>Show flags from users who reported a place as unsafe.</li>
-        </ul>
+        <Link
+          href="/admin/directory/new"
+          className="rounded bg-slate-800 px-3 py-2 text-xs font-medium text-white hover:bg-slate-900"
+        >
+          New listing
+        </Link>
       </div>
+
+      {listings.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">
+          No listings yet. Add the first vetted service to get started.
+        </div>
+      ) : (
+        <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+          {listings.map((listing) => {
+            const stale =
+              !listing.lastVerifiedAt ||
+              now - listing.lastVerifiedAt.getTime() > STALE_THRESHOLD_MS;
+            return (
+              <li key={listing.id}>
+                <Link
+                  href={`/admin/directory/${listing.id}`}
+                  className="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-slate-50"
+                >
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="truncate font-medium text-slate-900">{listing.name}</p>
+                    <p className="text-xs text-slate-500">
+                      {listing.category} · last verified{' '}
+                      {formatDate(listing.lastVerifiedAt)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    {listing.isHidden && (
+                      <span className="rounded bg-slate-100 px-2 py-1 text-slate-600">
+                        hidden
+                      </span>
+                    )}
+                    {stale && (
+                      <span className="rounded bg-amber-100 px-2 py-1 text-amber-800">
+                        stale
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
