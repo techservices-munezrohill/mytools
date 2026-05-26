@@ -5,18 +5,25 @@ import { useEffect } from 'react';
 
 export default function UmamiLoader() {
   useEffect(() => {
-    const host = process.env.NEXT_PUBLIC_UMAMI_HOST;
+    const scriptUrl = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
     const site = process.env.NEXT_PUBLIC_UMAMI_SITE_ID;
-    if (!host || !site) return;
+    if (!scriptUrl || !site) {
+      console.log('Umami disabled: missing env', { scriptUrl, site });
+      return;
+    }
 
     // avoid injecting multiple times
-    if ((window as any).umami) return;
+    if ((window as any).umami) {
+      console.log('Umami already present on window');
+      return;
+    }
 
     const s = document.createElement('script');
     s.async = true;
     s.defer = true;
     s.setAttribute('data-website-id', site);
-    s.src = `${host.replace(/\/$/, '')}/umami.js`;
+    s.src = scriptUrl;
+    console.log('Loading Umami script', s.src);
     document.head.appendChild(s);
 
     // create minimal global wrapper
